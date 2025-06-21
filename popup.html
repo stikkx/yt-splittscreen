@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <style>
     body {
-      width: 400px;
+      width: 450px;
       padding: 20px;
       font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -16,6 +16,34 @@
       margin-bottom: 20px;
       font-size: 18px;
       text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .layout-selector {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    
+    .layout-btn {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: 2px solid rgba(255,255,255,0.3);
+      padding: 10px 15px;
+      margin: 0 5px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    
+    .layout-btn.active {
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      border-color: white;
+    }
+    
+    .layout-btn:hover {
+      background: rgba(255,255,255,0.3);
     }
     
     .input-group {
@@ -75,33 +103,108 @@
       opacity: 0.8;
       margin-top: 5px;
     }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .link-type {
+      font-size: 11px;
+      opacity: 0.7;
+      margin-top: 3px;
+    }
   </style>
 </head>
 <body>
-  <h1>🎬 4-Way YouTube Split Screen</h1>
+  <h1>🎬 Multi-Screen Split View</h1>
   
-  <div class="input-group">
-    <label for="video1">Video 1 (Oben Links):</label>
-    <input type="text" id="video1" placeholder="https://www.youtube.com/watch?v=...">
-    <div class="example">Beispiel: https://www.youtube.com/watch?v=dQw4w9WgXcQ</div>
+  <div class="layout-selector">
+    <button class="layout-btn active" id="layout2x2">2x2 (4 Fenster)</button>
+    <button class="layout-btn" id="layout2plus1">2+1 (3 Fenster)</button>
+    <button class="layout-btn" id="layout2third">2/3 + 1/3 (4 Fenster)</button>
   </div>
   
-  <div class="input-group">
-    <label for="video2">Video 2 (Oben Rechts):</label>
-    <input type="text" id="video2" placeholder="https://www.youtube.com/watch?v=...">
+  <div id="layout2x2-inputs">
+    <div class="input-group">
+      <label for="video1">Video 1 (Oben Links):</label>
+      <input type="text" id="video1" placeholder="https://www.youtube.com/watch?v=... oder beliebiger Link">
+      <div class="example">YouTube: https://www.youtube.com/watch?v=dQw4w9WgXcQ</div>
+      <div class="example">Livetiming: https://livetiming.azurewebsites.net/events/50/results</div>
+    </div>
+    
+    <div class="input-group">
+      <label for="video2">Video 2 (Oben Rechts):</label>
+      <input type="text" id="video2" placeholder="https://www.youtube.com/watch?v=... oder beliebiger Link">
+    </div>
+    
+    <div class="input-group">
+      <label for="video3">Video 3 (Unten Links):</label>
+      <input type="text" id="video3" placeholder="https://www.youtube.com/watch?v=... oder beliebiger Link">
+    </div>
+    
+    <div class="input-group">
+      <label for="video4">Video 4 (Unten Rechts):</label>
+      <input type="text" id="video4" placeholder="https://www.youtube.com/watch?v=... oder beliebiger Link">
+    </div>
   </div>
   
-  <div class="input-group">
-    <label for="video3">Video 3 (Unten Links):</label>
-    <input type="text" id="video3" placeholder="https://www.youtube.com/watch?v=...">
+  <div id="layout2plus1-inputs" class="hidden">
+    <div class="input-group">
+      <label for="video2plus1_1">Fenster 1 (Oben Links):</label>
+      <input type="text" id="video2plus1_1" placeholder="https://www.youtube.com/watch?v=... oder beliebiger Link">
+      <div class="example">YouTube: https://www.youtube.com/watch?v=dQw4w9WgXcQ</div>
+      <div class="example">Livetiming: https://livetiming.azurewebsites.net/events/50/results</div>
+    </div>
+    
+    <div class="input-group">
+      <label for="video2plus1_2">Fenster 2 (Oben Rechts):</label>
+      <input type="text" id="video2plus1_2" placeholder="https://www.youtube.com/watch?v=... oder beliebiger Link">
+    </div>
+    
+    <div class="input-group">
+      <label for="video2plus1_3">Fenster 3 (Unten - Volle Breite):</label>
+      <input type="text" id="video2plus1_3" placeholder="https://www.youtube.com/watch?v=... oder beliebiger Link">
+    </div>
   </div>
   
-  <div class="input-group">
-    <label for="video4">Video 4 (Unten Rechts):</label>
-    <input type="text" id="video4" placeholder="https://www.youtube.com/watch?v=...">
+  <div id="layout2third-inputs" class="hidden">
+    <div class="input-group">
+      <label for="video2third_1">Hauptvideo (2/3 Links Oben):</label>
+      <input type="text" id="video2third_1" placeholder="https://www.youtube.com/watch?v=...">
+      <div class="example">YouTube: https://www.youtube.com/watch?v=dQw4w9WgXcQ</div>
+    </div>
+    
+    <div class="input-group">
+      <label for="video2third_2">Kleines Fenster 1 (2/3 Links Unten):</label>
+      <input type="text" id="video2third_2" placeholder="https://www.youtube.com/watch?v=...">
+    </div>
+    
+    <div class="input-group">
+      <label for="video2third_3">Kleines Fenster 2 (2/3 Links Unten):</label>
+      <input type="text" id="video2third_3" placeholder="https://www.youtube.com/watch?v=...">
+    </div>
+    
+    <div class="input-group">
+      <label for="video2third_4">Livetiming (1/3 Rechts - Volle Höhe):</label>
+      <input type="text" id="video2third_4" placeholder="https://livetiming.azurewebsites.net/events/50/results">
+      <div class="example">Livetiming: https://livetiming.azurewebsites.net/events/50/results</div>
+    </div>
   </div>
   
-  <button class="start-btn" id="startBtn">🚀 Split Screen Starten</button>
+  <button class="start-btn" id="startBtn">🚀 Split Screen Starten/Aktualisieren</button>
+  
+  <div class="button-group" style="margin-top: 10px; display: flex; gap: 10px;">
+    <button class="control-btn" id="updateBtn" style="flex: 1; background: linear-gradient(45deg, #4CAF50, #45a049);">
+      🔄 Bestehenden aktualisieren
+    </button>
+    <button class="control-btn" id="newBtn" style="flex: 1; background: linear-gradient(45deg, #2196F3, #1976D2);">
+      ➕ Neuen erstellen
+    </button>
+  </div>
+  
+  <div class="save-status" id="saveStatus" style="text-align: center; margin-top: 10px; font-size: 12px; opacity: 0.7;">
+    Links werden automatisch gespeichert
+  </div>
   
   <script src="popup.js"></script>
 </body>

@@ -1,4 +1,5 @@
 let currentVideos = [];
+let currentLayout = '2x2';
 
 // YouTube URL zu Embed URL konvertieren
 function convertToEmbedUrl(url) {
@@ -32,16 +33,85 @@ function convertToEmbedUrl(url) {
     return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&showinfo=0&controls=1&fs=0&iv_load_policy=3&disablekb=1&playsinline=1`;
   }
   
-  return null;
+  // Wenn es kein YouTube-Link ist, verwende die URL direkt
+  return url;
+}
+
+// Layout setzen
+function setLayout(layout) {
+  currentLayout = layout;
+  const container = document.getElementById('splitContainer');
+  const layoutInfo = document.getElementById('layoutInfo');
+  
+  // Entferne alle Layout-Klassen
+  container.classList.remove('layout-2x2', 'layout-2plus1', 'layout-2third');
+  
+  if (layout === '2x2') {
+    container.classList.add('layout-2x2');
+    layoutInfo.textContent = 'Layout: 2x2';
+    
+    // Stelle sicher, dass alle 4 Frames vorhanden sind
+    for (let i = 1; i <= 4; i++) {
+      if (!document.getElementById(`frame${i}`)) {
+        const frame = document.createElement('div');
+        frame.className = 'video-frame';
+        frame.id = `frame${i}`;
+        frame.innerHTML = `<div class="loading">Frame ${i} wird geladen...</div>`;
+        container.appendChild(frame);
+      }
+    }
+  } else if (layout === '2plus1') {
+    container.classList.add('layout-2plus1');
+    layoutInfo.textContent = 'Layout: 2+1';
+    
+    // Entferne den 4. Frame für 2+1 Layout
+    const frame4 = document.getElementById('frame4');
+    if (frame4) {
+      frame4.remove();
+    }
+    
+    // Stelle sicher, dass 3 Frames vorhanden sind
+    for (let i = 1; i <= 3; i++) {
+      if (!document.getElementById(`frame${i}`)) {
+        const frame = document.createElement('div');
+        frame.className = 'video-frame';
+        frame.id = `frame${i}`;
+        frame.innerHTML = `<div class="loading">Frame ${i} wird geladen...</div>`;
+        container.appendChild(frame);
+      }
+    }
+  } else {
+    container.classList.add('layout-2third');
+    layoutInfo.textContent = 'Layout: 2/3 + 1/3';
+    
+    // Stelle sicher, dass alle 4 Frames vorhanden sind für 2third Layout
+    for (let i = 1; i <= 4; i++) {
+      if (!document.getElementById(`frame${i}`)) {
+        const frame = document.createElement('div');
+        frame.className = 'video-frame';
+        frame.id = `frame${i}`;
+        frame.innerHTML = `<div class="loading">Frame ${i} wird geladen...</div>`;
+        container.appendChild(frame);
+      }
+    }
+  }
 }
 
 // Video in Frame laden
 function loadVideoInFrame(frameId, url) {
+  console.log(`loadVideoInFrame called: ${frameId}, URL: ${url}`);
+  
   const frame = document.getElementById(frameId);
+  if (!frame) {
+    console.error(`Frame ${frameId} nicht gefunden!`);
+    return;
+  }
+  
   const embedUrl = convertToEmbedUrl(url);
+  console.log(`Converted URL: ${embedUrl}`);
   
   if (!embedUrl) {
-    frame.innerHTML = '<div class="error-message">Ungültiger YouTube-Link</div>';
+    frame.innerHTML = '<div class="error-message">Ungültiger Link</div>';
     return;
   }
   
@@ -54,32 +124,55 @@ function loadVideoInFrame(frameId, url) {
   frame.innerHTML = '';
   frame.appendChild(iframe);
   
+  console.log(`Iframe created for ${frameId} with src: ${embedUrl}`);
+  
   // Fehlerbehandlung
   iframe.onerror = function() {
-    frame.innerHTML = '<div class="error-message">Fehler beim Laden des Videos</div>';
+    console.error(`Error loading iframe for ${frameId}`);
+    frame.innerHTML = '<div class="error-message">Fehler beim Laden der Seite</div>';
+  };
+  
+  // Laden-Event
+  iframe.onload = function() {
+    console.log(`Frame ${frameId} erfolgreich geladen: ${url}`);
   };
 }
 
 // Alle Videos laden
-function loadVideos(videos) {
+function loadVideos(videos, layout) {
   currentVideos = videos;
+  currentLayout = layout;
   
-  // Fülle auf 4 Videos auf (leere Strings für leere Frames)
-  while (videos.length < 4) {
+  console.log('Loading videos:', videos, 'Layout:', layout);
+  
+  // Setze Layout
+  setLayout(layout);
+  
+  // Fülle Videos auf
+  const maxFrames = (layout === '2x2' || layout === '2third') ? 4 : 3;
+  while (videos.length < maxFrames) {
     videos.push('');
   }
   
+  console.log('Max frames:', maxFrames, 'Videos after padding:', videos);
+  
   // Lade Videos in die entsprechenden Frames
-  for (let i = 0; i < 4; i++) {
-    const frameId = `video${i + 1}`;
+  for (let i = 0; i < maxFrames; i++) {
+    const frameId = `frame${i + 1}`;
     const videoUrl = videos[i];
+    
+    console.log(`Loading frame ${frameId} with URL:`, videoUrl);
     
     if (videoUrl) {
       loadVideoInFrame(frameId, videoUrl);
     } else {
       // Leerer Frame
       const frame = document.getElementById(frameId);
-      frame.innerHTML = '<div class="loading">Kein Video</div>';
+      if (frame) {
+        frame.innerHTML = '<div class="loading">Kein Inhalt</div>';
+      } else {
+        console.error(`Frame ${frameId} nicht gefunden!`);
+      }
     }
   }
 }
@@ -87,7 +180,10 @@ function loadVideos(videos) {
 // Event Listener für Nachrichten vom Background Script
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'loadVideos') {
-    loadVideos(request.videos);
+    loadVideos(request.videos, request.layout);
+    sendResponse({ success: true });
+  } else if (request.action === 'updateVideos') {
+    loadVideos(request.videos, request.layout);
     sendResponse({ success: true });
   }
 });
@@ -106,7 +202,7 @@ document.getElementById('fullscreenBtn').addEventListener('click', function() {
 // Aktualisieren
 document.getElementById('refreshBtn').addEventListener('click', function() {
   if (currentVideos.length > 0) {
-    loadVideos(currentVideos);
+    loadVideos(currentVideos, currentLayout);
   }
 });
 
@@ -149,15 +245,28 @@ document.addEventListener('fullscreenchange', function() {
 // Automatisches Laden beim Start (falls Videos bereits vorhanden)
 window.addEventListener('load', function() {
   // Versuche gespeicherte Videos zu laden
-  chrome.storage.local.get(['video1', 'video2', 'video3', 'video4'], function(result) {
+  chrome.storage.local.get(['layout', 'video1', 'video2', 'video3', 'video4', 'video2plus1_1', 'video2plus1_2', 'video2plus1_3', 'video2third_1', 'video2third_2', 'video2third_3', 'video2third_4'], function(result) {
     const videos = [];
-    for (let i = 1; i <= 4; i++) {
-      if (result[`video${i}`]) {
-        videos.push(result[`video${i}`]);
-      }
+    const layout = result.layout || '2x2';
+    
+    if (layout === '2plus1') {
+      if (result.video2plus1_1) videos.push(result.video2plus1_1);
+      if (result.video2plus1_2) videos.push(result.video2plus1_2);
+      if (result.video2plus1_3) videos.push(result.video2plus1_3);
+    } else if (layout === '2third') {
+      if (result.video2third_1) videos.push(result.video2third_1);
+      if (result.video2third_2) videos.push(result.video2third_2);
+      if (result.video2third_3) videos.push(result.video2third_3);
+      if (result.video2third_4) videos.push(result.video2third_4);
+    } else {
+      if (result.video1) videos.push(result.video1);
+      if (result.video2) videos.push(result.video2);
+      if (result.video3) videos.push(result.video3);
+      if (result.video4) videos.push(result.video4);
     }
+    
     if (videos.length > 0) {
-      loadVideos(videos);
+      loadVideos(videos, layout);
     }
   });
 }); 

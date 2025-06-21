@@ -1,19 +1,23 @@
 {
   "manifest_version": 3,
-  "name": "4-Way YouTube Split Screen",
+  "name": "Multi-Screen Split View",
   "version": "1.0",
-  "description": "Teilt das Browserfenster in 4 Bereiche für gleichzeitige YouTube-Videos",
+  "description": "Teilt das Browserfenster in 4 oder 3 Bereiche für gleichzeitige Videos und Websites",
   "permissions": [
     "activeTab",
     "scripting",
     "storage"
   ],
   "host_permissions": [
-    "https://www.youtube.com/*"
+    "https://www.youtube.com/*",
+    "https://youtu.be/*",
+    "https://livetiming.azurewebsites.net/*",
+    "https://*/*",
+    "http://*/*"
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "4-Way YouTube Split Screen"
+    "default_title": "Multi-Screen Split View"
   },
   "background": {
     "service_worker": "background.js"
