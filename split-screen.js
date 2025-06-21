@@ -29,6 +29,12 @@ function convertToEmbedUrl(url) {
     videoId = embedMatch[1];
   }
   
+  // YouTube Live URL: https://www.youtube.com/live/VIDEO_ID
+  const liveMatch = url.match(/youtube\.com\/live\/([a-zA-Z0-9_-]+)/);
+  if (liveMatch) {
+    videoId = liveMatch[1];
+  }
+  
   if (videoId) {
     return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1&showinfo=0&controls=1&fs=0&iv_load_policy=3&disablekb=1&playsinline=1`;
   }
