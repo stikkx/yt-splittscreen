@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 400px;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 18px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .input-group {
+      margin-bottom: 15px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.9);
+      color: #333;
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+    
+    input[type="text"]:focus {
+      outline: none;
+      background: white;
+      box-shadow: 0 0 10px rgba(255,255,255,0.5);
+    }
+    
+    .start-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+    
+    .start-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    .start-btn:active {
+      transform: translateY(0);
+    }
+    
+    .example {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎬 4-Way YouTube Split Screen</h1>
+  
+  <div class="input-group">
+    <label for="video1">Video 1 (Oben Links):</label>
+    <input type="text" id="video1" placeholder="https://www.youtube.com/watch?v=...">
+    <div class="example">Beispiel: https://www.youtube.com/watch?v=dQw4w9WgXcQ</div>
+  </div>
+  
+  <div class="input-group">
+    <label for="video2">Video 2 (Oben Rechts):</label>
+    <input type="text" id="video2" placeholder="https://www.youtube.com/watch?v=...">
+  </div>
+  
+  <div class="input-group">
+    <label for="video3">Video 3 (Unten Links):</label>
+    <input type="text" id="video3" placeholder="https://www.youtube.com/watch?v=...">
+  </div>
+  
+  <div class="input-group">
+    <label for="video4">Video 4 (Unten Rechts):</label>
+    <input type="text" id="video4" placeholder="https://www.youtube.com/watch?v=...">
+  </div>
+  
+  <button class="start-btn" id="startBtn">🚀 Split Screen Starten</button>
+  
+  <script src="popup.js"></script>
+</body>
+</html> 

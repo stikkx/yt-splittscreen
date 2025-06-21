@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "4-Way YouTube Split Screen",
+  "version": "1.0",
+  "description": "Teilt das Browserfenster in 4 Bereiche für gleichzeitige YouTube-Videos",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://www.youtube.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "4-Way YouTube Split Screen"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["split-screen.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+} 
